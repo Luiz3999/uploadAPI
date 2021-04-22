@@ -1,51 +1,38 @@
 const express = require('express');
-const { prependOnceListener } = require('../app');
 const router = express.Router();
 const Produto = require('../models/produtos');
 const mongoose = require('mongoose');
 
 router.get('/', (req, res) => {
-    Produto.find()
-        .exec()
-        .then(doc => {
-            res.status(200).json(doc)
-        })
-        .catch(error => {
-            res.status(500).json({
-                erro: err
-            })
-        });
-
-
+    res.status(200).json({
+        message: 'GET request para /produtos'
+    })
 });
 
-router.get('/produtoid', (req, res) => {
-    const id = req.params.produto.id;
+
+router.get('/:produtoId', (req, res) => {
+    const id = req.params.produtoId;
     if (id === 'unidesc') {
         res.status(200).json({
-            message: 'produto encontrado',
+            message: 'Produto encontrado',
             id: id
-        });
+        })
 
     } else {
         res.status(400).json({
-            message: 'produto não encontrao'
+            message: 'PRODUTO não encontrado'
         })
     }
 
-
 });
 
+router.post('/', (req, res) => {
 
-router.post('/', (req, res, next) => {
-
-    const produto = new produto({
+    const produto = new Produto({
         _id: new mongoose.Types.ObjectId(),
         nome: req.body.nome,
-        preço: req.body.preço
-
+        preco: req.body.preco
     });
-
     produto.save()
         .then(result => {
 
@@ -61,8 +48,54 @@ router.post('/', (req, res, next) => {
             })
         });
 
+        
+    })
 
-});
+    router.put('/', (req, res) => {
+        res.status(200).json({
+            message: 'PUT request para /produtos'
+        })
+    });
+    
+
+    
+    router.put('/:produtoId', (req, res) => {
+        const id = req.params.produtoId;
+        if (id === 'unidesc') {
+            res.status(200).json({
+                message: 'Produto encontrado',
+                id: id
+            })
+    
+        } else {
+            res.status(400).json({
+                message: 'PRODUTO não encontrado'
+            })
+        }
+    
+    });
+
+    router.delete("/:id", async (req, res) => {
+        const { id } = req.params;
+      
+        const produto = await Produto.findById(id);
+      
+        if (produto) {
+          throw new Error("Produto não encontrado");
+        }
+      
+       produto.nome = req.body.name;
+       produto.preco = req.body.price;
+      
+        await produto.remova();
+      
+        res.status(200).json({
+          message: "Produto foi removido",
+        });
+      });
+
+
+
 
 
 module.exports = router;

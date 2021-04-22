@@ -76,18 +76,24 @@ router.post('/', (req, res) => {
     });
 
     router.delete("/:id", async (req, res) => {
-        const { id } = req.params;
+        
+        
+        const id = req.params;
+       
       
         const produto = await Produto.findById(id);
       
         if (produto) {
+            
+            
           throw new Error("Produto não encontrado");
+            
         }
       
-       produto.nome = req.body.name;
-       produto.preco = req.body.price;
+       produto.nome = req.body.nome;
+       produto.preco = req.body.preco;
       
-        await produto.remova();
+        await produto.remover();
       
         res.status(200).json({
           message: "Produto foi removido",
